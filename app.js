@@ -8,12 +8,18 @@ const cors = require('koa2-cors')
 const koaBody = require('koa-body')
 const path = require('path')
 const koaStatic = require('koa-static')
+const koaJwt = require('koa-jwt')
+const jwt = require('jsonwebtoken')
+const util = require('util')
+const verify = util.promisify(jwt.verify) // 解密
+const secret = 'jwt demo'
 
 const index = require('./routes/index')
 const user = require('./routes/user')
 const role = require('./routes/role')
 const company = require('./routes/company')
 const article = require('./routes/article')
+const project = require('./routes/project')
 
 // error handler
 onerror(app)
@@ -37,25 +43,25 @@ app.use(bodyparser({
 }))
 app.use(json())
 app.use(cors())
-// app.use(jwtKoa({secret}).unless({
+// app.use(koaJwt({secret}).unless({
 //   path: [/^\/user\/login/] //数组中的路径不需要通过jwt验证
 // }))
 
-// app.use(function (ctx, next) {
-//   return next().catch((err) => {
-//     console.log(err)
-//     if (err.status === 401) {
-//       ctx.status = 401
-//       ctx.body = 'Protected resource, use Authorization header to get access\n'
-//     } else {
-//       throw err
-//     }
-//   })
-// })
+app.use(function (ctx, next) {
+  return next().catch((err) => {
+    console.log(err)
+    if (err.status === 401) {
+      ctx.status = 401
+      ctx.body = 'Protected resource, use Authorization header to get access\n'
+    } else {
+      throw err
+    }
+  })
+})
 
-// app.use(jwtKoa({ secret }).unless({
-//   path: [/^\/user\/login/] // 数组中的路径不需要通过jwt验证
-// }))
+app.use(koaJwt({ secret }).unless({
+  path: [/^\/user\/login/, /^\/user\/register/] // 数组中的路径不需要通过jwt验证
+}))
 
 app.use(logger())
 
@@ -63,14 +69,14 @@ app.use(logger())
 // app.use(views(__dirname + '/public'))
 
 // logger
-// app.use(async (ctx, next) => {
-//   const start = new Date()
-//   await next()
-//   const ms = new Date() - start
-//   console.log(ctx.body)
-//   console.log(`${ctx.method} ${ctx.url} - ${ms}ms`)
-//   // ctx.body.times = `${ms}ms`
-// })
+app.use(async (ctx, next) => {
+  const start = new Date()
+  await next()
+  const ms = new Date() - start
+  console.log(ctx.body)
+  console.log(`${ctx.method} ${ctx.url} - ${ms}ms`)
+  // ctx.body.times = `${ms}ms`
+})
 
 // trans page & pageSize to skip & limit
 app.use(async (ctx, next) => {
@@ -82,12 +88,24 @@ app.use(async (ctx, next) => {
   await next()
 })
 
+// 通过jtwToken获取userId
+app.use(async (ctx, next) => {
+  const token = ctx.header.authorization
+  let payload
+  if (token) {
+    payload = await verify(token.split(' ')[1], secret)
+    ctx.header.userId = payload.userId
+  }
+  await next()
+})
+
 // routes
 app.use(index.routes(), index.allowedMethods())
 app.use(user.routes(), user.allowedMethods())
 app.use(role.routes(), role.allowedMethods())
 app.use(company.routes(), company.allowedMethods())
 app.use(article.routes(), article.allowedMethods())
+app.use(project.routes(), project.allowedMethods())
 
 // error-handling
 app.on('error', (err, ctx) => {

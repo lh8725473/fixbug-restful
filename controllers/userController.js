@@ -1,5 +1,5 @@
 const userModel = require('../models/user')
-const roleModel = require('../models/role')
+// const roleModel = require('../models/role')
 const companyModel = require('../models/company')
 const articleModel = require('../models/article')
 const jwt = require('jsonwebtoken')
@@ -19,9 +19,9 @@ class UserController {
         errorMsg: '用户名已存在！'
       }
     }
-    const role = await roleModel.findOne({ roleType: postData.roleType })
-    delete postData.roleType
-    postData.role = role._id
+    // const role = await roleModel.findOne({ roleType: postData.roleType })
+    // delete postData.roleType
+    // postData.role = role._id
     const data = await userModel.save(postData)
     ctx.body = {
       code: 1,
