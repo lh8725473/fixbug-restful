@@ -63,7 +63,7 @@ class ProjectController {
   async projectList (ctx) {
     console.log(ctx.header.userId)
     const filter = {
-      creator: ctx.header.userId
+      users: { $in: [ctx.header.userId] }
     }
     const projectList = await projectModel.projectList(filter)
     ctx.body = {

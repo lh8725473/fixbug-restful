@@ -20,6 +20,7 @@ const role = require('./routes/role')
 const company = require('./routes/company')
 const article = require('./routes/article')
 const project = require('./routes/project')
+const bug = require('./routes/bug')
 
 // error handler
 onerror(app)
@@ -106,6 +107,7 @@ app.use(role.routes(), role.allowedMethods())
 app.use(company.routes(), company.allowedMethods())
 app.use(article.routes(), article.allowedMethods())
 app.use(project.routes(), project.allowedMethods())
+app.use(bug.routes(), bug.allowedMethods())
 
 // error-handling
 app.on('error', (err, ctx) => {
