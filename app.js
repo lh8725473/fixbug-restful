@@ -2,7 +2,7 @@ const Koa = require('koa')
 const app = new Koa()
 const json = require('koa-json')
 const onerror = require('koa-onerror')
-const bodyparser = require('koa-bodyparser')
+// const bodyparser = require('koa-bodyparser')
 const logger = require('koa-logger')
 const cors = require('koa2-cors')
 const koaBody = require('koa-body')
@@ -28,27 +28,31 @@ onerror(app)
 // middlewares
 // 静态资源目录对于相对入口文件app.js的路径
 const staticPath = './public'
-console.log(path.join(__dirname, staticPath))
 app.use(koaStatic(
   path.join(__dirname, staticPath)
 ))
 
+// app.use(bodyparser({
+//   multipart: true,
+//   formidable: {
+//     maxFileSize: 200 * 1024 * 1024 // 设置上传文件大小最大限制，默认2M
+//   },
+//   enableTypes: ['json', 'form', 'text']
+// }))
 app.use(koaBody({
   multipart: true,
   formidable: {
     maxFileSize: 200 * 1024 * 1024 // 设置上传文件大小最大限制，默认2M
   }
 }))
-app.use(bodyparser({
-  enableTypes: ['json', 'form', 'text']
-}))
 app.use(json())
 app.use(cors())
-// app.use(koaJwt({secret}).unless({
-//   path: [/^\/user\/login/] //数组中的路径不需要通过jwt验证
-// }))
 
-app.use(function (ctx, next) {
+app.use(koaJwt({ secret }).unless({
+  path: [/^\/user\/login/, /^\/user\/register/, /^\/upload/] // 数组中的路径不需要通过jwt验证
+}))
+
+app.use((ctx, next) => {
   return next().catch((err) => {
     console.log(err)
     if (err.status === 401) {
@@ -60,9 +64,9 @@ app.use(function (ctx, next) {
   })
 })
 
-app.use(koaJwt({ secret }).unless({
-  path: [/^\/user\/login/, /^\/user\/register/] // 数组中的路径不需要通过jwt验证
-}))
+// app.use(koaJwt({ secret }).unless({
+//   path: [/^\/user\/login/, /^\/user\/register/, /^\/upload/] // 数组中的路径不需要通过jwt验证
+// }))
 
 app.use(logger())
 
