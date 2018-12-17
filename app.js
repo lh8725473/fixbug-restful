@@ -26,6 +26,13 @@ const bug = require('./routes/bug')
 onerror(app)
 
 // middlewares
+app.use(koaBody({
+  multipart: true,
+  formidable: {
+    maxFileSize: 200 * 1024 * 1024 // 设置上传文件大小最大限制，默认2M
+  }
+}))
+
 // 静态资源目录对于相对入口文件app.js的路径
 const staticPath = './public'
 app.use(koaStatic(
@@ -39,17 +46,12 @@ app.use(koaStatic(
 //   },
 //   enableTypes: ['json', 'form', 'text']
 // }))
-app.use(koaBody({
-  multipart: true,
-  formidable: {
-    maxFileSize: 200 * 1024 * 1024 // 设置上传文件大小最大限制，默认2M
-  }
-}))
+
 app.use(json())
 app.use(cors())
 
 app.use(koaJwt({ secret }).unless({
-  path: [/^\/user\/login/, /^\/user\/register/, /^\/upload/] // 数组中的路径不需要通过jwt验证
+  path: [/^\/user\/login/, /^\/user\/register/, /^\/user\/uploadFile/, /^\/upload/] // 数组中的路径不需要通过jwt验证
 }))
 
 app.use((ctx, next) => {
