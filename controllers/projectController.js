@@ -62,8 +62,12 @@ class ProjectController {
   // 项目列表
   async projectList (ctx) {
     console.log(ctx.header.userId)
+    const { projectName } = ctx.request.query
     const filter = {
       users: { $in: [ctx.header.userId] }
+    }
+    if (projectName) {
+      filter.projectName = { $regex: new RegExp(`${projectName}`, 'g') }
     }
     const projectList = await projectModel.projectList(filter)
     ctx.body = {
