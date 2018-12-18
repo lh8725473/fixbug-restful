@@ -80,9 +80,7 @@ app.use(async (ctx, next) => {
   const start = new Date()
   await next()
   const ms = new Date() - start
-  console.log(ctx.body)
-  console.log(`${ctx.method} ${ctx.url} - ${ms}ms`)
-  // ctx.body.times = `${ms}ms`
+  ctx.body.time = `${ms}ms`
 })
 
 // trans page & pageSize to skip & limit

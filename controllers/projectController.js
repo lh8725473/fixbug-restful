@@ -61,13 +61,16 @@ class ProjectController {
 
   // 项目列表
   async projectList (ctx) {
-    console.log(ctx.header.userId)
-    const { projectName } = ctx.request.query
+    const { searchWord } = ctx.request.query
     const filter = {
       users: { $in: [ctx.header.userId] }
     }
-    if (projectName) {
-      filter.projectName = { $regex: new RegExp(`${projectName}`, 'g') }
+    if (searchWord) {
+      filter.$or = [
+        { projectName: { $regex: new RegExp(`${searchWord}`, 'g') } },
+        { projectDec: { $regex: new RegExp(`${searchWord}`, 'g') } }
+      ]
+      // filter.projectName = { $regex: new RegExp(`${searchWord}`, 'g') }
     }
     const projectList = await projectModel.projectList(filter)
     ctx.body = {

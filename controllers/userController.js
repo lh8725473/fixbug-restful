@@ -33,7 +33,6 @@ class UserController {
   async login (ctx) {
     const postData = ctx.request.body
     const user = await userModel.findOne(postData)
-    console.log(user)
     if (user) {
       let userToken = {
         userId: user._id
