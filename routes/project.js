@@ -7,6 +7,7 @@ router.post('/add', projectCtrl.addProject)
 router.post('/update', projectCtrl.updateProject)
 router.get('/list', projectCtrl.projectList)
 router.post('/addUserToProject', projectCtrl.addUserToProject)
+router.post('/removeUserToProject', projectCtrl.removeUserToProject)
 // router.get('/:_id', companyCtrl.findUser)
 // router.get('/', companyCtrl.findList)
 

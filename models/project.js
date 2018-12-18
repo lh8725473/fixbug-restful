@@ -35,6 +35,7 @@ const ProjectModel = {
   projectList: async (filter) => {
     const project = await Project.find(filter)
       .populate('creator')
+      .populate('users')
       .sort({ createdTime: -1 })
       // .limit(+limit)
       // .skip(+skip)

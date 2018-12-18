@@ -59,6 +59,26 @@ class ProjectController {
     }
   }
 
+  // 删除项目成员
+  async removeUserToProject (ctx) {
+    const token = ctx.header.authorization
+    if (token) {
+      const projectId = ctx.request.body.projectId
+      const postData = { $pull: { users: ctx.request.body.userId } }
+
+      const data = await projectModel.updateProject(projectId, postData)
+      ctx.body = {
+        code: 1,
+        data: data
+      }
+    } else {
+      ctx.body = {
+        message: '参数错误',
+        code: -1
+      }
+    }
+  }
+
   // 项目列表
   async projectList (ctx) {
     const { searchWord } = ctx.request.query
