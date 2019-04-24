@@ -35,7 +35,8 @@ const BugFlowModel = {
   },
   bugFlowList: async (filter) => {
     const bugFlow = await BugFlow.find(filter)
-      .populate('creator')
+      .populate('fromUser')
+      .populate('toUser')
       .sort({ createdTime: -1 })
       // .limit(+limit)
       // .skip(+skip)

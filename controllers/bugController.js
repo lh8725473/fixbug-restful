@@ -33,6 +33,7 @@ class BugController {
     const data = await bugModel.updatebug(bugId, postData)
     const bugFlowData = {
       bug: data._id,
+      bugFlowDec: postData.bugFlowDec,
       fromUser: userId,
       toUser: postData.disposeUser,
       curStatus: postData.status
