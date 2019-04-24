@@ -47,7 +47,7 @@ class BugController {
   // 获取bug详情
   async getBugById (ctx) {
     const bugId = ctx.request.query.bugId
-    // async/await 地狱
+    // 典型 async/await 地狱
     // const data = await bugModel.findBugById(bugId)
     // const bugFlowList = await bugFlowModel.bugFlowList({ bug: bugId })
     // data.bugFlowList = bugFlowList
@@ -70,7 +70,7 @@ class BugController {
   // 项目bug列表
   async bugList (ctx) {
     console.log(ctx.header.userId)
-    const { limit = 50, skip = 0, projectId, type } = ctx.request.query
+    const { limit = 50, skip = 0, projectId, type, priority, status, searchWord } = ctx.request.query
     let filter = {}
     filter.project = projectId
     if (type === 'own') {
@@ -78,6 +78,18 @@ class BugController {
     }
     if (type === 'toMe') {
       filter.disposeUser = ctx.header.userId
+    }
+    if (priority) {
+      filter.priority = priority
+    }
+    if (status) {
+      filter.status = status
+    }
+    if (searchWord) {
+      filter.$or = [
+        { title: { $regex: new RegExp(`${searchWord}`, 'g') } },
+        { bugDec: { $regex: new RegExp(`${searchWord}`, 'g') } }
+      ]
     }
     const bugList = await bugModel.bugList(filter, limit, skip)
     ctx.body = {
