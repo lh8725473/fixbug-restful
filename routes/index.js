@@ -59,24 +59,23 @@ router.get('/json', async (ctx, next) => {
   }
 })
 
-router.get('/mergeFile', async (ctx, next) => {
-  // y
+router.post('/uploadFile', async (ctx, next) => {
+  const file = ctx.request.files.file
+  console.log(ctx.request.body)
+  console.log(file)
+  const reader = fs.createReadStream(file.path)
+  let filePath = path.resolve('public/upload') + `/${file.name}`
+  console.log(filePath)
+  const stream = fs.createWriteStream(filePath)
+  reader.pipe(stream)
 
-  var concat = require('concat-files')
-
-  concat([
-    path.resolve('public/upload') + `/0__001-HUAWEIMHA-AL00-Wed_Mar_29_2017_18-37-23.jpg`,
-    path.resolve('public/upload') + `/1__001-HUAWEIMHA-AL00-Wed_Mar_29_2017_18-37-23.jpg`,
-    path.resolve('public/upload') + `/2__001-HUAWEIMHA-AL00-Wed_Mar_29_2017_18-37-23.jpg`
-  ], path.resolve('public/upload') + `/test.jpg`, (err) => {
-    if (err) throw err
-    console.log('done')
+  console.log('uploading %s -> %s', file.name, stream.path)
+  stream.on('finish', () => {
+    console.log('写入完成')
   })
-
-  // mergeFile(0)
   ctx.body = {
     code: 1,
-    url: `写入成功`
+    url: `upload/${file.name}`
   }
 })
 
