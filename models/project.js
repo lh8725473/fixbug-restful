@@ -42,6 +42,16 @@ const ProjectModel = {
       .lean()
       .exec()
     return project
+  },
+  projectUserList: async (filter) => {
+    console.log(filter)
+    const project = await Project.findOne(filter, 'users')
+      .populate('users')
+      // .limit(+limit)
+      // .skip(+skip)
+      .lean()
+      .exec()
+    return project.users
   }
 }
 

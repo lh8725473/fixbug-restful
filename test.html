@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+    <input type="file" id="imgLocal" />  
+</body>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script>
+    let inp = document.querySelector('#imgLocal')
+    inp.onchange = function(e) {
+        let fileList = document.querySelector('#imgLocal').files
+        console.log(fileList) //files
+        let file = fileList[0]
+        var reader = new FileReader();
+
+        
+        var binaryString = reader.readAsArrayBuffer(file)
+
+
+        // var str = '1234567890';
+        // var out = new ArrayBuffer(str.length * 2);
+        // var u16a = new Uint16Array(out);
+        // var strs = str.split("");
+        // for (var i = 0; i < strs.length; i++) {
+        //     u16a[i] = strs[i].charCodeAt();
+        // }
+
+        console.log(binaryString)
+        reader.onload = function (e) {
+            console.log(e)
+        }
+
+
+        const formDate = new FormData()
+        // formDate.append('file', file)
+        formDate.append('data', out)
+        formDate.append('userID', '123')
+        let config = {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            },
+            onUploadProgress: (progressEvent) => {
+                console.log(progressEvent)
+            }
+        }
+        axios
+            .post('http://localhost:3001/user/uploadFile', formDate, config)
+            .then(res => {
+                console.log(res)
+            })
+            .catch(err => {
+                console.log(err)
+            })
+    }
+    // var xhr = new XMLHttpRequest();
+    // xhr.open('GET', 'http://localhost:3001/upload/%E5%9B%BD%E5%AE%B6%E7%94%B5%E7%BD%91.jpg');
+    // xhr.onprogress = function (event) {
+    //     if (event.lengthComputable) {
+    //         console.log(event.loaded);
+    //         console.log(event.total);
+    //     }
+    // };
+    // xhr.send();
+
+</script>
+
+</html>

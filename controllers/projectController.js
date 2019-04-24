@@ -47,9 +47,16 @@ class ProjectController {
       const postData = { $push: { users: ctx.request.body.userId } }
 
       const data = await projectModel.updateProject(projectId, postData)
-      ctx.body = {
-        code: 1,
-        data: data
+      if (data) {
+        ctx.body = {
+          code: 1,
+          data: data
+        }
+      } else {
+        ctx.body = {
+          message: '项目Id错误',
+          code: -1
+        }
       }
     } else {
       ctx.body = {
@@ -96,6 +103,19 @@ class ProjectController {
     ctx.body = {
       code: 1,
       projectList: projectList
+    }
+  }
+
+  // 项目列表
+  async projectUserList (ctx) {
+    const { projectId } = ctx.request.query
+    const filter = {
+      _id: projectId
+    }
+    const userList = await projectModel.projectUserList(filter)
+    ctx.body = {
+      code: 1,
+      userList: userList
     }
   }
 }

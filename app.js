@@ -51,7 +51,7 @@ app.use(json())
 app.use(cors())
 
 app.use(koaJwt({ secret }).unless({
-  path: [/^\/user\/login/, /^\/user\/register/, /^\/user\/uploadFile/, /^\/upload/] // 数组中的路径不需要通过jwt验证
+  path: [/^\/user\/login/, /^\/user\/register/, /^\/user\/uploadFile/, /^\/user\/uploadFileNew/, /^\/user\/mergeFile/, /^\/mergeFile/, /^\/upload/] // 数组中的路径不需要通过jwt验证
 }))
 
 app.use((ctx, next) => {
@@ -76,12 +76,13 @@ app.use(logger())
 // app.use(views(__dirname + '/public'))
 
 // logger
-app.use(async (ctx, next) => {
-  const start = new Date()
-  await next()
-  const ms = new Date() - start
-  ctx.body.time = `${ms}ms`
-})
+// app.use(async (ctx, next) => {
+//   const start = new Date()
+//   await next()
+//   const ms = new Date() - start
+//   console.log(ctx.body)
+//   ctx.body.time = `${ms}ms`
+// })
 
 // trans page & pageSize to skip & limit
 app.use(async (ctx, next) => {

@@ -41,20 +41,57 @@ const userValidate = {
 
 router.prefix('/user')
 
-router.post('/register', validate(userValidate.register), userctrl.register)
+router
+  .post('/register', validate(userValidate.register), userctrl.register)
   .post('/login', validate(userValidate.login), userctrl.login)
   .get('/findUserByName', userctrl.findUserByName)
   .get('/own', userctrl.own)
   .get('/:_id', userctrl.findUserById)
   .get('/', validate(userValidate.findList), userctrl.findList)
   .put('/:_id', validate(userValidate.updateUser), userctrl.updateUser)
+  .post('/uploadFileNew', async (ctx, next) => {
+    console.log(ctx.request)
+    let str = ''
+    ctx.req.on('data', function (chunk) {
+      str += chunk
+    })
+    ctx.req.on('end', function (chunk) {
+      console.log('end')
+    })
+    ctx.body = {
+      code: 1,
+      url: ctx.request.body
+    }
+  })
   .post('/uploadFile', async (ctx, next) => {
+    // console.log(ctx.request.files)
+    // console.log(Buffer.from(ctx.request.body.data, 'hex'))
+    // function toBuffer (ab) {
+    //   console.log(ab.length)
+    //   var buf = Buffer.from(ab.length)
+    //   var view = new Uint8Array(ab)
+    //   for (var i = 0; i < buf.length; ++i) {
+    //     buf[i] = view[i]
+    //   }
+    //   console.log(buf)
+    //   return buf
+    // }
+    // fs.writeFile(path.resolve('public/upload') + `/test.txt`, Buffer.from(ctx.request.body.data), (err) => {
+    //   // throws an error, you could also catch it here
+    //   if (err) throw err
+
+    //   // success case, the file was saved
+    //   console.log('Lyric saved!')
+    // })
     const file = ctx.request.files.file
+    console.log(ctx.request.body)
+    console.log(file)
     const reader = fs.createReadStream(file.path)
-    let filePath = path.resolve('public/upload') + `/${file.name}`
+    let filePath = path.resolve('public/upload') + `/${ctx.request.body.fileName}`
     console.log(filePath)
     const stream = fs.createWriteStream(filePath)
     reader.pipe(stream)
+
     console.log('uploading %s -> %s', file.name, stream.path)
     stream.on('finish', () => {
       console.log('写入完成')
@@ -63,17 +100,6 @@ router.post('/register', validate(userValidate.register), userctrl.register)
       code: 1,
       url: `upload/${file.name}`
     }
-    // // 上传单个文件
-    // const file = ctx.request.files.file // 获取上传文件
-    // // 创建可读流
-    // const reader = fs.createReadStream(file.path)
-    // let filePath = path.join(__dirname, 'public/upload') + `/${file.name}`
-    // console.log(filePath)
-    // // 创建可写流
-    // const upStream = fs.createWriteStream(filePath)
-    // // 可读流通过管道写入可写流
-    // reader.pipe(upStream)
-    // ctx.body = '上传成功！'
   })
 
 module.exports = router

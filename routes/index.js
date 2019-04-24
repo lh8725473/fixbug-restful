@@ -1,5 +1,7 @@
 const router = require('koa-router')()
 const nodemailer = require('nodemailer')
+const path = require('path')
+const fs = require('fs')
 
 // router.get('/', async (ctx, next) => {
 //   await ctx.render('index', {
@@ -54,6 +56,27 @@ router.get('/json', async (ctx, next) => {
       title: error.message
     }
     ctx.app.emit('error', error, ctx)
+  }
+})
+
+router.get('/mergeFile', async (ctx, next) => {
+  // y
+
+  var concat = require('concat-files')
+
+  concat([
+    path.resolve('public/upload') + `/0__001-HUAWEIMHA-AL00-Wed_Mar_29_2017_18-37-23.jpg`,
+    path.resolve('public/upload') + `/1__001-HUAWEIMHA-AL00-Wed_Mar_29_2017_18-37-23.jpg`,
+    path.resolve('public/upload') + `/2__001-HUAWEIMHA-AL00-Wed_Mar_29_2017_18-37-23.jpg`
+  ], path.resolve('public/upload') + `/test.jpg`, (err) => {
+    if (err) throw err
+    console.log('done')
+  })
+
+  // mergeFile(0)
+  ctx.body = {
+    code: 1,
+    url: `写入成功`
   }
 })
 

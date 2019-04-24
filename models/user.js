@@ -3,10 +3,8 @@ const mongoose = require('mongoose')
 const UserSchema = new mongoose.Schema({
   username: { type: String, required: true },
   password: { type: String, required: true },
-  // balance: {
-  //   type: Number,
-  //   default: 0
-  // },
+  email: { type: String, required: true },
+  imgUrl: { type: String },
   createdTime: {
     type: Date,
     default: Date.now
