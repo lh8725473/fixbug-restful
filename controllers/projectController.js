@@ -106,7 +106,7 @@ class ProjectController {
     }
   }
 
-  // 项目列表
+  // 项目成员列表
   async projectUserList (ctx) {
     const { projectId } = ctx.request.query
     const filter = {

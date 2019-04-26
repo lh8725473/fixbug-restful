@@ -70,10 +70,11 @@ class BugController {
 
   // 项目bug列表
   async bugList (ctx) {
-    console.log(ctx.header.userId)
-    const { limit = 50, skip = 0, projectId, type, priority, status, searchWord } = ctx.request.query
+    const { limit = 50, skip = 0, projectId, type, priority, status, searchWord, createdTimeStart, createdTimeEnd } = ctx.request.query
     let filter = {}
-    filter.project = projectId
+    if (projectId) {
+      filter.project = projectId
+    }
     if (type === 'own') {
       filter.creator = ctx.header.userId
     }
@@ -91,6 +92,17 @@ class BugController {
         { title: { $regex: new RegExp(`${searchWord}`, 'g') } },
         { bugDec: { $regex: new RegExp(`${searchWord}`, 'g') } }
       ]
+    }
+
+    // 创建时间过滤
+    if (createdTimeStart) {
+      filter.createdTime = { $gte: new Date(createdTimeStart) }
+    }
+    if (createdTimeEnd) {
+      filter.createdTime = { $lt: new Date(createdTimeEnd) }
+    }
+    if (createdTimeStart && createdTimeEnd) {
+      filter.createdTime = { $gte: new Date(createdTimeStart), $lt: new Date(createdTimeEnd) }
     }
     const bugList = await bugModel.bugList(filter, limit, skip)
     ctx.body = {
