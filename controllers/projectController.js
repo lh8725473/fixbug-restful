@@ -1,38 +1,24 @@
 const projectModel = require('../models/project')
-const jwt = require('jsonwebtoken')
-const util = require('util')
 // const _ = require('lodash')
-const verify = util.promisify(jwt.verify) // 解密
-const secret = 'jwt demo'
 
 class ProjectController {
   // 增加项目
   async addProject (ctx) {
-    const token = ctx.header.authorization
-    let payload
-    if (token) {
-      payload = await verify(token.split(' ')[1], secret)
-      const postData = ctx.request.body
-      postData.creator = payload.userId
-      postData.users = [payload.userId]
-      const project = await projectModel.findOne({ projectName: postData.projectName, creator: postData.creator })
-      if (project) {
-        ctx.body = {
-          message: '项目名称已存在',
-          code: -1
-        }
-        return
-      }
-      const data = await projectModel.save(postData)
+    const postData = ctx.request.body
+    postData.creator = ctx.header.userId
+    postData.users = [ctx.header.userId]
+    const project = await projectModel.findOne({ projectName: postData.projectName, creator: postData.creator })
+    if (project) {
       ctx.body = {
-        code: 1,
-        data: data
-      }
-    } else {
-      ctx.body = {
-        message: '参数错误',
+        message: '项目名称已存在',
         code: -1
       }
+      return
+    }
+    const data = await projectModel.save(postData)
+    ctx.body = {
+      code: 1,
+      data: data
     }
   }
 
@@ -49,26 +35,18 @@ class ProjectController {
 
   // 增加项目成员
   async addUserToProject (ctx) {
-    const token = ctx.header.authorization
-    if (token) {
-      const projectId = ctx.request.body.projectId
-      const postData = { $push: { users: ctx.request.body.userId } }
+    const projectId = ctx.request.body.projectId
+    const postData = { $push: { users: ctx.request.body.userId } }
 
-      const data = await projectModel.updateProject(projectId, postData)
-      if (data) {
-        ctx.body = {
-          code: 1,
-          data: data
-        }
-      } else {
-        ctx.body = {
-          message: '项目Id错误',
-          code: -1
-        }
+    const data = await projectModel.updateProject(projectId, postData)
+    if (data) {
+      ctx.body = {
+        code: 1,
+        data: data
       }
     } else {
       ctx.body = {
-        message: '参数错误',
+        message: '项目Id错误',
         code: -1
       }
     }
@@ -76,21 +54,13 @@ class ProjectController {
 
   // 删除项目成员
   async removeUserToProject (ctx) {
-    const token = ctx.header.authorization
-    if (token) {
-      const projectId = ctx.request.body.projectId
-      const postData = { $pull: { users: ctx.request.body.userId } }
+    const projectId = ctx.request.body.projectId
+    const postData = { $pull: { users: ctx.request.body.userId } }
 
-      const data = await projectModel.updateProject(projectId, postData)
-      ctx.body = {
-        code: 1,
-        data: data
-      }
-    } else {
-      ctx.body = {
-        message: '参数错误',
-        code: -1
-      }
+    const data = await projectModel.updateProject(projectId, postData)
+    ctx.body = {
+      code: 1,
+      data: data
     }
   }
 
