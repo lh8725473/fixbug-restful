@@ -7,7 +7,11 @@ class ProjectController {
     const postData = ctx.request.body
     postData.creator = ctx.header.userId
     postData.users = [ctx.header.userId]
-    const project = await projectModel.findOne({ projectName: postData.projectName, creator: postData.creator })
+    const projectFilter = {
+      projectName: postData.projectName,
+      creator: postData.creator
+    }
+    const project = await projectModel.findOne(projectFilter)
     if (project) {
       ctx.body = {
         message: '项目名称已存在',
