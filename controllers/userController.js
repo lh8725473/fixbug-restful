@@ -18,6 +18,7 @@ class UserController {
         code: -1,
         errorMsg: '用户名已存在！'
       }
+      return
     }
     // const role = await roleModel.findOne({ roleType: postData.roleType })
     // delete postData.roleType
@@ -32,6 +33,7 @@ class UserController {
   // 登录
   async login (ctx) {
     const postData = ctx.request.body
+    console.log(postData)
     const user = await userModel.findOne(postData)
     if (user) {
       let userToken = {
