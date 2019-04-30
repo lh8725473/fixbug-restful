@@ -15,6 +15,14 @@ class ProjectController {
       const postData = ctx.request.body
       postData.creator = payload.userId
       postData.users = [payload.userId]
+      const project = await projectModel.findOne({ projectName: postData.projectName, creator: postData.creator })
+      if (project) {
+        ctx.body = {
+          message: '项目名称已存在',
+          code: -1
+        }
+        return
+      }
       const data = await projectModel.save(postData)
       ctx.body = {
         code: 1,
