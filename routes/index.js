@@ -77,13 +77,16 @@ router.post('/uploadFile', async (ctx, next) => {
     })
   })
 
+  // const stream = fs.createWriteStream(filePath)
+  // reader.pipe(stream)
   // stream.on('finish', () => {
   //   console.log('写入完成')
-  //   // ctx.body = {
-  //   //   code: 1,
-  //   //   url: `upload/${file.name}`
-  //   // }
   // })
+
+  // ctx.body = {
+  //   code: 1,
+  //   url: `upload/${file.name}`
+  // }
 
   ctx.body = await pro
 })
