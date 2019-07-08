@@ -61,22 +61,31 @@ router.get('/json', async (ctx, next) => {
 
 router.post('/uploadFile', async (ctx, next) => {
   const file = ctx.request.files.file
-  console.log(ctx.request.body)
-  console.log(file)
   const reader = fs.createReadStream(file.path)
   let filePath = path.resolve('public/upload') + `/${file.name}`
   console.log(filePath)
-  const stream = fs.createWriteStream(filePath)
-  reader.pipe(stream)
 
-  console.log('uploading %s -> %s', file.name, stream.path)
-  stream.on('finish', () => {
-    console.log('写入完成')
+  const pro = new Promise((resolve, reject) => {
+    const stream = fs.createWriteStream(filePath)
+    reader.pipe(stream)
+
+    stream.on('finish', function () {
+      resolve({
+        code: 1,
+        url: `upload/${file.name}`
+      })
+    })
   })
-  ctx.body = {
-    code: 1,
-    url: `upload/${file.name}`
-  }
+
+  // stream.on('finish', () => {
+  //   console.log('写入完成')
+  //   // ctx.body = {
+  //   //   code: 1,
+  //   //   url: `upload/${file.name}`
+  //   // }
+  // })
+
+  ctx.body = await pro
 })
 
 module.exports = router
