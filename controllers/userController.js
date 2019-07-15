@@ -30,27 +30,57 @@ class UserController {
     }
   }
 
-  // 登录
+  // 用户名或者邮箱登录
   async login (ctx) {
     const postData = ctx.request.body
-    console.log(postData)
-    const user = await userModel.findOne(postData)
-    if (user) {
-      let userToken = {
-        userId: user._id
-      }
-      const token = jwt.sign(userToken, secret, { expiresIn: '24h' })
-      ctx.body = {
-        code: 1,
-        user: user,
-        token
-      }
-    } else {
-      ctx.body = {
-        code: -1,
-        errorMsg: '用户或密码错误'
-      }
-    }
+    // 典型异步陷阱
+    // const userUsername = await userModel.findOne(postData)
+    // const userEmail = await userModel.findOne({
+    //   email: postData.username,
+    //   password: postData.password
+    // })
+    // const user = userUsername || userEmail
+    // if (user) {
+    //   let userToken = {
+    //     userId: user._id
+    //   }
+    //   const token = jwt.sign(userToken, secret, { expiresIn: '24h' })
+    //   ctx.body = {
+    //     code: 1,
+    //     user: user,
+    //     token
+    //   }
+    // } else {
+    //   ctx.body = {
+    //     code: -1,
+    //     errorMsg: '用户或密码错误'
+    //   }
+    // }
+    const userUsername = userModel.findOne(postData)
+    const userEmail = userModel.findOne({
+      email: postData.username,
+      password: postData.password
+    })
+    await Promise.all([userUsername, userEmail])
+      .then((data) => {
+        const user = data[0] || data[1]
+        if (user) {
+          let userToken = {
+            userId: user._id
+          }
+          const token = jwt.sign(userToken, secret, { expiresIn: '24h' })
+          ctx.body = {
+            code: 1,
+            user: user,
+            token
+          }
+        } else {
+          ctx.body = {
+            code: -1,
+            errorMsg: '用户或密码错误'
+          }
+        }
+      })
   }
 
   // token获取用户信息
