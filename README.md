@@ -3,8 +3,12 @@
 ### 功能导图
 ![avatar](./fixbug功能列表.png) 
 
-### api导图
+### API导图
 ![avatar](./fixbugapi.png) 
+[API文档](https://www.processon.com/view/link/5cbfeb08e4b085d01083220e)文档地址
+
+### 项目主要目录
+![avatar](./项目目录.png) 
 
 需要安装[mongodb](https://www.mongodb.com/)
 
