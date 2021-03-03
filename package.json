@@ -28,7 +28,7 @@
     "koa2-validation": "^0.1.0",
     "mongoose": "^5.2.18",
     "nodemailer": "^4.6.8",
-    "pug": "^2.0.0-rc.1"
+    "pug": "^3.0.1"
   },
   "devDependencies": {
     "babel-eslint": "^10.0.1",
