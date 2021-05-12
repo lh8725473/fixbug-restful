@@ -27,7 +27,7 @@
     "koa2-cors": "^2.0.6",
     "koa2-validation": "^0.1.0",
     "mongoose": "^5.2.18",
-    "nodemailer": "^4.6.8",
+    "nodemailer": "^6.4.16",
     "pug": "^2.0.0-rc.1"
   },
   "devDependencies": {
